@@ -25,12 +25,6 @@ const (
 	BotHTTPProxyURL   = "BOT_PROXY_URL"
 )
 
-var (
-	AppName        = ""
-	AppVersion     = ""
-	AppCompileTime = ""
-)
-
 var re = regexp.MustCompile(`(vmess://|vless://|trojan://|ss://)[^\s]+`)
 
 const urlPrefix = "https://t.me/s/"
@@ -42,10 +36,6 @@ type Database struct {
 }
 
 func main() {
-	// compileTime, err := time.Parse(time.RFC3339, AppCompileTime)
-	// if nil != err {
-	// 	panic(err)
-	// }
 	log := zerolog.New(zerolog.NewConsoleWriter(func(w *zerolog.ConsoleWriter) { w.Out = os.Stderr; w.TimeFormat = time.RFC3339 })).With().Timestamp().Logger().Level(zerolog.TraceLevel)
 	if err := godotenv.Load(); nil != err {
 		if !errors.Is(err, os.ErrNotExist) {

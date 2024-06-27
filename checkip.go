@@ -33,20 +33,17 @@ func CheckIp(log zerolog.Logger, xrayproxyURL string) ([]byte, time.Duration) {
 	if nil != err {
 		log.Fatal().Err(err).Msg("failed to initialize http request")
 	}
-
 	start := time.Now()
 	res, err := httpClient.Do(req)
 	if nil != err {
 		log.Fatal().Err(err).Msg("failed to issue http request")
 	}
 	defer res.Body.Close()
-
 	resBody, err := io.ReadAll(res.Body)
 	if nil != err {
 		log.Fatal().Err(err).Msg("failed to read response body")
 	}
 	log.Info().Msg(string(resBody))
-
 	duration := time.Since(start)
 	log.Info().Str("Delay:", string(duration))
 	return resBody, duration
