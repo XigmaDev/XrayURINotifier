@@ -28,7 +28,7 @@ const (
 var re = regexp.MustCompile(`(vmess://|vless://|trojan://|ss://)[^\s]+`)
 
 const urlPrefix = "https://t.me/s/"
-const imagePath = "/home/xigma/dev/project/XrayURIChecker/photo.jpg"
+const imagePath = "photo.jpg"
 const dbPath = "file.db"
 
 type Database struct {
