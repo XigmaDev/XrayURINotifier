@@ -54,8 +54,11 @@ func buildBot(log zerolog.Logger) {
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   update.Message.Text,
-	})
+	params := &bot.SendPhotoParams{
+		ChatID:  update.Message.Chat.ID,
+		Photo:   &models.InputFileString{Data: "AgACAgIAAxkDAAIBOWJimnCJHQJiJ4P3aasQCPNyo6mlAALDuzEbcD0YSxzjB-vmkZ6BAQADAgADbQADJAQ"},
+		Caption: "Preloaded Facebook logo",
+	}
+
+	b.SendPhoto(ctx, params)
 }
