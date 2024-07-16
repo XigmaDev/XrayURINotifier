@@ -10,7 +10,7 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-func urlTestOverSocks(url string, proxyHost string, proxyPort int, timeout time.Duration) (int, int) {
+func urlTestOverSocks(url string, proxyHost string, proxyPort int, timeout time.Duration) (time.Duration, int) {
 	dialer, err := proxy.SOCKS5("tcp", fmt.Sprintf("%s:%d", proxyHost, proxyPort), nil, proxy.Direct)
 	if err != nil {
 		fmt.Printf("Failed to create SOCKS5 dialer: %v\n", err)
@@ -35,18 +35,18 @@ func urlTestOverSocks(url string, proxyHost string, proxyPort int, timeout time.
 	defer response.Body.Close()
 
 	endTime := time.Now()
-	latency := int(endTime.Sub(startTime).Milliseconds())
+	latency := endTime.Sub(startTime)
 
 	_, err = io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Printf("Failed to read response body: %v\n", err)
-		return 0, 0
+		return 0 * time.Microsecond, 0
 	}
 
 	return latency, response.StatusCode
 }
 
-func urlTest(log zerolog.Logger, proxyHost string, proxyPort int) int {
+func urlTest(log zerolog.Logger, proxyHost string, proxyPort int) time.Duration {
 	url := "http://www.gstatic.com/generate_204"
 	if proxyHost == "" {
 		proxyHost = "localhost"

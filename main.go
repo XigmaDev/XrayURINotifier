@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
@@ -168,12 +169,31 @@ func mdAutofixer(text string) string {
 	return sb.String()
 }
 
-func testURLWithXray(url string) (time.Duration, error) {
+func StartXray(configFile string) (*exec.Cmd, error) {
+	cmd := exec.Command("xray", "-c", configFile)
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+	return cmd, nil
+}
+
+func testURLWithXray(log zerolog.Logger, url string) (time.Duration, error) {
 	//convert url to config.json file
-	// run (xray run -c config.json) over localhost 10808 socks port
 	//resbody , duration := CheckIp(xrayproxyURL)
-	//latency := urlTest(log,proxyHost, proxyPort)
-	var latency time.Duration = 100 * time.Millisecond
+	configFile := "config.json"
+	xrayCmd, err := StartXray(configFile)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to start Xray")
+	}
+	defer xrayCmd.Process.Kill()
+
+	// Allow some time for Xray to start
+	time.Sleep(5 * time.Second)
+
+	// Measure the latency
+	latency := urlTest(log, "127.0.0.1", 10808)
+
+	log.Info().Str("latency", latency.String()).Msg("Latency over SOCKS5 proxy")
 	return latency, nil
 }
 
